@@ -1,5 +1,7 @@
 package isec.airbnbapi.Data.Models;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -10,9 +12,11 @@ public class User {
     private String id;
 
     @Field
+    @NotBlank(message = "Name cannot be blank")
     private String name;
 
     @Field
+    @NotNull(message = "Number cannot be null")
     private Integer number;
 
     public User(String name, Integer number) {
