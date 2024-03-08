@@ -1,7 +1,9 @@
 package isec.airbnbapi.Controllers;
 
+import isec.airbnbapi.Data.Models.Login;
 import isec.airbnbapi.Data.Models.User;
 import isec.airbnbapi.Data.MongoRepositories.UserRepository;
+import isec.airbnbapi.Utils.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,14 +18,17 @@ public class UserController {
     private final UserRepository userRepository;
 
     @Autowired
-    public UserController(UserRepository userRepository) {
+    public UserController(UserRepository userRepository){
         this.userRepository = userRepository;
     }
 
     @PostMapping
     public ResponseEntity<String> addUser(@RequestBody User user) {
         try {
-            this.userRepository.save(new User(user.getName(), user.getNumber()));
+            Encrypt encrypt = new Encrypt();
+            String encPswd = encrypt.encrypt(user.getPassword());
+
+            this.userRepository.save(new User(user.getName(), user.getUsername(), encPswd));
             return ResponseEntity.ok("User Added!");
         } catch (Exception e) {
             System.out.println("[ERROR] - " + e);
@@ -75,6 +80,50 @@ public class UserController {
                 receivedUser.updateUser(user);
                 this.userRepository.save(receivedUser);
                 return ResponseEntity.ok(receivedUser);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Couldn't find any user with the id: '" + id + "'!");
+            }
+        } catch (Exception e) {
+            System.out.println("[ERROR] - " + e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Login login) {
+        try {
+            List<User> users = this.userRepository.findAll();
+            for(User user : users) {
+                if(user.getUsername().equals(login.getUsername())) {
+                    // encrypt password
+                    Encrypt encrypt = new Encrypt();
+                    String encPswd = encrypt.encrypt(login.getPassword());
+
+                    if(user.getPassword().equals(encPswd)) {
+                        // login
+                        user.setLogged(true);
+                        this.userRepository.save(user);
+                        return ResponseEntity.ok("Login successfully!");
+                    }
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Wrong password for user with the username: '" + login.getUsername() + "'!");
+                }
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Couldn't find any user with the username: '" + login.getUsername() + "'!");
+        } catch (Exception e) {
+            System.out.println("[ERROR] - " + e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/logout/{id}")
+    public ResponseEntity<?> logout(@PathVariable String id) {
+        try {
+            Optional<User> userOpt = this.userRepository.findById(id);
+            if (userOpt.isPresent()) {
+                User receivedUser = userOpt.get();
+                receivedUser.setLogged(false);
+                this.userRepository.save(receivedUser);
+                return ResponseEntity.ok("Logout successfully!");
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Couldn't find any user with the id: '" + id + "'!");
             }

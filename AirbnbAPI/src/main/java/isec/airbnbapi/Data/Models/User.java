@@ -16,30 +16,23 @@ public class User {
     private String name;
 
     @Field
-    @NotNull(message = "Number cannot be null")
-    private Integer number;
+    @NotBlank(message = "username cannot be blank")
+    private String username;
 
-    public User(String name, Integer number) {
-        super();
+    @Field
+    @NotBlank(message = "password cannot be blank")
+    private String password;
+
+    @Field
+    private boolean logged;
+
+    public User(String name, String username, String password) {
         this.name = name;
-        this.number = number;
+        this.username = username;
+        this.password = password;
+        this.logged = false;
     }
 
-
-    //SETTERS
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setNumber(Integer number) {
-        this.number = number;
-    }
-
-    //GETTERS
     public String getId() {
         return id;
     }
@@ -48,12 +41,41 @@ public class User {
         return name;
     }
 
-    public Integer getNumber() {
-        return number;
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public boolean isLogged() {
+        return logged;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setLogged(boolean logged) {
+        this.logged = logged;
     }
 
     public void updateUser(User user){
         this.name = user.name;
-        this.number = user.number;
+        this.username = user.username;
+        this.password = user.password;
     }
 }
