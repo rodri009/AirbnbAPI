@@ -3,3 +3,10 @@
   "username": "rodrigocosta20",
   "password" : "password"
 }
+
+{
+  "name": "Administrator",
+  "username": "admin",
+  "password" : "passwordAdmin",
+  "role" : "ADMIN"
+}

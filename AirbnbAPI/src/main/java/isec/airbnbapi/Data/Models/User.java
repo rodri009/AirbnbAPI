@@ -1,7 +1,6 @@
 package isec.airbnbapi.Data.Models;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -26,11 +25,15 @@ public class User {
     @Field
     private boolean logged;
 
-    public User(String name, String username, String password) {
+    @Field
+    private RoleEnum role;
+
+    public User(String name, String username, String password, RoleEnum role) {
         this.name = name;
         this.username = username;
         this.password = password;
         this.logged = false;
+        this.role = role;
     }
 
     public String getId() {
@@ -51,6 +54,10 @@ public class User {
 
     public boolean isLogged() {
         return logged;
+    }
+
+    public RoleEnum getRole() {
+        return role;
     }
 
     public void setId(String id) {
