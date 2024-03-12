@@ -1,7 +1,10 @@
 package isec.airbnbapi.Controllers;
 
+import isec.airbnbapi.Data.Models.Booking;
 import isec.airbnbapi.Data.Models.Login;
+import isec.airbnbapi.Data.Models.Property;
 import isec.airbnbapi.Data.Models.User;
+import isec.airbnbapi.Data.MongoRepositories.BookingRepository;
 import isec.airbnbapi.Data.MongoRepositories.UserRepository;
 import isec.airbnbapi.Utils.Encrypt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +19,12 @@ import java.util.Optional;
 @RequestMapping("users")
 public class UserController {
     private final UserRepository userRepository;
+    private final BookingRepository bookingRepository;
 
     @Autowired
-    public UserController(UserRepository userRepository){
+    public UserController(UserRepository userRepository, BookingRepository bookingRepository){
         this.userRepository = userRepository;
+        this.bookingRepository = bookingRepository;
     }
 
     @PostMapping
@@ -61,6 +66,13 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable String id) {
         try {
+            // delete the bookings that contains the property
+            List<Booking> bookings = this.bookingRepository.findAll();
+            for(Booking booking : bookings) {
+                if(booking.getIdUser().equals(id)) {
+                    this.bookingRepository.deleteById(booking.getId());
+                }
+            }
             Optional<User> userOpt = this.userRepository.findById(id);
             this.userRepository.deleteById(id);
             String msg = (userOpt.isPresent() ? "User with id '" + id + "' was deleted!" : "Couldn't find any user with the id: '" + id + "'!");

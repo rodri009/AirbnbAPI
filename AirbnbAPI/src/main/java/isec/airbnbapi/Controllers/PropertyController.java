@@ -1,7 +1,9 @@
 package isec.airbnbapi.Controllers;
 
+import isec.airbnbapi.Data.Models.Booking;
 import isec.airbnbapi.Data.Models.Property;
 import isec.airbnbapi.Data.Models.User;
+import isec.airbnbapi.Data.MongoRepositories.BookingRepository;
 import isec.airbnbapi.Data.MongoRepositories.PropertyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,9 +17,11 @@ import java.util.Optional;
 @RequestMapping("properties")
 public class PropertyController {
     private final PropertyRepository propertyRepository;
+    private final BookingRepository bookingRepository;
     @Autowired
-    public PropertyController(PropertyRepository propertyRepository) {
+    public PropertyController(PropertyRepository propertyRepository, BookingRepository bookingRepository) {
         this.propertyRepository = propertyRepository;
+        this.bookingRepository = bookingRepository;
     }
 
     @PostMapping
@@ -68,6 +72,13 @@ public class PropertyController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteProperty(@PathVariable String id) {
         try {
+            // delete the bookings that contains the property
+            List<Booking> bookings = this.bookingRepository.findAll();
+            for(Booking booking : bookings) {
+                if(booking.getIdProperty().equals(id)) {
+                    this.bookingRepository.deleteById(booking.getId());
+                }
+            }
             Optional<Property> propertyOptional = this.propertyRepository.findById(id);
             this.propertyRepository.deleteById(id);
             String msg = (propertyOptional.isPresent() ? "Property with id '" + id + "' was deleted!" : "Couldn't find any property with the id: '" + id + "'!");
