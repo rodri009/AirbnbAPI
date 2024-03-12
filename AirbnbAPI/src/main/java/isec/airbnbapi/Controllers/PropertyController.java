@@ -1,6 +1,7 @@
 package isec.airbnbapi.Controllers;
 
 import isec.airbnbapi.Data.Models.Booking;
+import isec.airbnbapi.Data.Models.BookingStateEnum;
 import isec.airbnbapi.Data.Models.Property;
 import isec.airbnbapi.Data.Models.User;
 import isec.airbnbapi.Data.MongoRepositories.BookingRepository;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -74,11 +76,21 @@ public class PropertyController {
         try {
             // delete the bookings that contains the property
             List<Booking> bookings = this.bookingRepository.findAll();
+            List<String> bookingIdsToDelete = new ArrayList<>();
             for(Booking booking : bookings) {
-                if(booking.getIdProperty().equals(id)) {
-                    this.bookingRepository.deleteById(booking.getId());
+                if(booking.getIdProperty().equals(id) && !booking.getBookingState().equals(BookingStateEnum.FINISHED)) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There are unfinished bookings associated with this property!");
+                }
+                else if (booking.getIdProperty().equals(id)) {
+                    bookingIdsToDelete.add(booking.getId());
                 }
             }
+
+            // removes the bookings
+            for(String bookingId : bookingIdsToDelete) {
+                this.bookingRepository.deleteById(bookingId);
+            }
+
             Optional<Property> propertyOptional = this.propertyRepository.findById(id);
             this.propertyRepository.deleteById(id);
             String msg = (propertyOptional.isPresent() ? "Property with id '" + id + "' was deleted!" : "Couldn't find any property with the id: '" + id + "'!");

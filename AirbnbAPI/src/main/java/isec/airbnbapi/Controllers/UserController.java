@@ -1,9 +1,6 @@
 package isec.airbnbapi.Controllers;
 
-import isec.airbnbapi.Data.Models.Booking;
-import isec.airbnbapi.Data.Models.Login;
-import isec.airbnbapi.Data.Models.Property;
-import isec.airbnbapi.Data.Models.User;
+import isec.airbnbapi.Data.Models.*;
 import isec.airbnbapi.Data.MongoRepositories.BookingRepository;
 import isec.airbnbapi.Data.MongoRepositories.UserRepository;
 import isec.airbnbapi.Utils.Encrypt;
@@ -12,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,12 +64,21 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable String id) {
         try {
-            // delete the bookings that contains the property
+            // check if there are bookings that contains the property
             List<Booking> bookings = this.bookingRepository.findAll();
+            List<String> bookingIdsToDelete = new ArrayList<>();
             for(Booking booking : bookings) {
-                if(booking.getIdUser().equals(id)) {
-                    this.bookingRepository.deleteById(booking.getId());
+                if(booking.getIdUser().equals(id) && !booking.getBookingState().equals(BookingStateEnum.FINISHED)) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There are unfinished bookings associated with this user!");
                 }
+                else if (booking.getIdUser().equals(id)) {
+                    bookingIdsToDelete.add(booking.getId());
+                }
+            }
+
+            // removes the bookings
+            for(String bookingId : bookingIdsToDelete) {
+                this.bookingRepository.deleteById(bookingId);
             }
             Optional<User> userOpt = this.userRepository.findById(id);
             this.userRepository.deleteById(id);
