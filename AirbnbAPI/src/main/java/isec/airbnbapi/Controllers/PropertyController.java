@@ -1,10 +1,8 @@
 package isec.airbnbapi.Controllers;
 
-import isec.airbnbapi.Data.Models.Booking;
-import isec.airbnbapi.Data.Models.BookingStateEnum;
-import isec.airbnbapi.Data.Models.Property;
-import isec.airbnbapi.Data.Models.User;
+import isec.airbnbapi.Data.Models.*;
 import isec.airbnbapi.Data.MongoRepositories.BookingRepository;
+import isec.airbnbapi.Data.MongoRepositories.ImageRepository;
 import isec.airbnbapi.Data.MongoRepositories.PropertyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,10 +18,12 @@ import java.util.Optional;
 public class PropertyController {
     private final PropertyRepository propertyRepository;
     private final BookingRepository bookingRepository;
+    private final ImageRepository imageRepository;
     @Autowired
-    public PropertyController(PropertyRepository propertyRepository, BookingRepository bookingRepository) {
+    public PropertyController(PropertyRepository propertyRepository, BookingRepository bookingRepository, ImageRepository imageRepository) {
         this.propertyRepository = propertyRepository;
         this.bookingRepository = bookingRepository;
+        this.imageRepository = imageRepository;
     }
 
     @PostMapping
@@ -89,6 +89,14 @@ public class PropertyController {
             // removes the bookings
             for(String bookingId : bookingIdsToDelete) {
                 this.bookingRepository.deleteById(bookingId);
+            }
+
+            // removes the images associated
+            List<Image> images = this.imageRepository.findAll();
+            for(Image image : images) {
+                if(image.getIdProperty().equals(id)) {
+                    this.imageRepository.deleteById(image.getId());
+                }
             }
 
             Optional<Property> propertyOptional = this.propertyRepository.findById(id);

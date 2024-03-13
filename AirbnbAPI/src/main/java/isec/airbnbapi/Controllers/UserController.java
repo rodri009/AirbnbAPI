@@ -122,7 +122,8 @@ public class UserController {
                         // login
                         user.setLogged(true);
                         this.userRepository.save(user);
-                        return ResponseEntity.ok("Login successfully!");
+                        return ResponseEntity.ok(user);
+                        //return ResponseEntity.ok("Login successfully!");
                     }
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Wrong password for user with the username: '" + login.getUsername() + "'!");
                 }
