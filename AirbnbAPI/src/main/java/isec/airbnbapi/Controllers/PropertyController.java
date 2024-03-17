@@ -2,7 +2,6 @@ package isec.airbnbapi.Controllers;
 
 import isec.airbnbapi.Data.Models.*;
 import isec.airbnbapi.Data.MongoRepositories.BookingRepository;
-import isec.airbnbapi.Data.MongoRepositories.ImageRepository;
 import isec.airbnbapi.Data.MongoRepositories.PropertyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,17 +17,17 @@ import java.util.Optional;
 public class PropertyController {
     private final PropertyRepository propertyRepository;
     private final BookingRepository bookingRepository;
-    private final ImageRepository imageRepository;
     @Autowired
-    public PropertyController(PropertyRepository propertyRepository, BookingRepository bookingRepository, ImageRepository imageRepository) {
+    public PropertyController(PropertyRepository propertyRepository, BookingRepository bookingRepository) {
         this.propertyRepository = propertyRepository;
         this.bookingRepository = bookingRepository;
-        this.imageRepository = imageRepository;
     }
 
     @PostMapping
-    public ResponseEntity<String> addProperty(@RequestBody Property property) {
+    public ResponseEntity<String> addProperty(@ModelAttribute PropertyRequest property) {
+
         try {
+            byte[] fileContent = property.getImage().getBytes();
             this.propertyRepository.save(new Property(
                         property.getName(),
                         property.getDescription(),
@@ -37,7 +36,8 @@ public class PropertyController {
                         property.getNrToilets(),
                         property.getCapacity(),
                         property.getPricePerNight(),
-                        property.getLocation()
+                        property.getLocation(),
+                        fileContent
                     )
             );
 
@@ -78,7 +78,7 @@ public class PropertyController {
             List<Booking> bookings = this.bookingRepository.findAll();
             List<String> bookingIdsToDelete = new ArrayList<>();
             for(Booking booking : bookings) {
-                if(booking.getIdProperty().equals(id) && !booking.getBookingState().equals(BookingStateEnum.FINISHED)) {
+                if(booking.getIdProperty().equals(id) && !booking.getBookingState().equals(BookingStateEnum.DECLINED)) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There are unfinished bookings associated with this property!");
                 }
                 else if (booking.getIdProperty().equals(id)) {
@@ -89,14 +89,6 @@ public class PropertyController {
             // removes the bookings
             for(String bookingId : bookingIdsToDelete) {
                 this.bookingRepository.deleteById(bookingId);
-            }
-
-            // removes the images associated
-            List<Image> images = this.imageRepository.findAll();
-            for(Image image : images) {
-                if(image.getIdProperty().equals(id)) {
-                    this.imageRepository.deleteById(image.getId());
-                }
             }
 
             Optional<Property> propertyOptional = this.propertyRepository.findById(id);

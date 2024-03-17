@@ -68,7 +68,7 @@ public class UserController {
             List<Booking> bookings = this.bookingRepository.findAll();
             List<String> bookingIdsToDelete = new ArrayList<>();
             for(Booking booking : bookings) {
-                if(booking.getIdUser().equals(id) && !booking.getBookingState().equals(BookingStateEnum.FINISHED)) {
+                if(booking.getIdUser().equals(id) && !booking.getBookingState().equals(BookingStateEnum.DECLINED)) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There are unfinished bookings associated with this user!");
                 }
                 else if (booking.getIdUser().equals(id)) {

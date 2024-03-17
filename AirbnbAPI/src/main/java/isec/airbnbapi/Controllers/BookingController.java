@@ -138,15 +138,15 @@ public class BookingController {
         }
     }
 
-    @PutMapping("finish/{id}")
-    public ResponseEntity<?> finishBooking(@PathVariable String id) {
+    @PutMapping("decline/{id}")
+    public ResponseEntity<?> declineBooking(@PathVariable String id) {
         try {
             Optional<Booking> bookingOptional = this.bookingRepository.findById(id);
             if (bookingOptional.isPresent()) {
                 Booking receivedBooking = bookingOptional.get();
-                receivedBooking.setBookingState(BookingStateEnum.FINISHED);
+                receivedBooking.setBookingState(BookingStateEnum.DECLINED);
                 this.bookingRepository.save(receivedBooking);
-                return ResponseEntity.ok("Booking finished!");
+                return ResponseEntity.ok("Booking declined!");
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Couldn't find any booking with the id: '" + id + "'!");
             }
@@ -176,7 +176,7 @@ public class BookingController {
             for (Booking booking : bookings) {
                 if(booking.getIdProperty().equals(possibleBooking.getIdProperty())) {
 
-                    if(booking.getBookingState().equals(BookingStateEnum.FINISHED))
+                    if(booking.getBookingState().equals(BookingStateEnum.DECLINED))
                         continue;
 
                     boolean flag1 = Utils.isDateWithinRange(booking.getCheckinDate(), booking.getCheckoutDate(), possibleBooking.getCheckinDate());

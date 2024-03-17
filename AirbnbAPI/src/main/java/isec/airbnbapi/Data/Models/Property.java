@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Document("properties")
 public class Property {
@@ -43,7 +46,11 @@ public class Property {
     @NotBlank(message = "Location cannot be blank")
     private String location;
 
-    public Property(String name, String description, Integer nrBedrooms, Integer nrBeds, Integer nrToilets, Integer capacity, Integer pricePerNight, String location) {
+    @Field
+    @NotNull(message = "image cannot be blank")
+    private byte[] image;
+
+    public Property(String name, String description, Integer nrBedrooms, Integer nrBeds, Integer nrToilets, Integer capacity, Integer pricePerNight, String location, byte[] image) {
         super();
         this.name = name;
         this.description = description;
@@ -53,6 +60,7 @@ public class Property {
         this.capacity = capacity;
         this.pricePerNight = pricePerNight;
         this.location = location;
+        this.image = image;
     }
 
     public String getId() {
@@ -91,6 +99,9 @@ public class Property {
         return location;
     }
 
+    public byte[] getImage() {
+        return image;
+    }
 
     public void setId(String id) {
         this.id = id;
@@ -126,6 +137,10 @@ public class Property {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
     }
 
     @Override
