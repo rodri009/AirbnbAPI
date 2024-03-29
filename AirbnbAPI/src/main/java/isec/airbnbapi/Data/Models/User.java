@@ -19,6 +19,10 @@ public class User {
     private String username;
 
     @Field
+    @NotBlank(message = "email cannot be blank")
+    private String email;
+
+    @Field
     @NotBlank(message = "password cannot be blank")
     private String password;
 
@@ -28,9 +32,10 @@ public class User {
     @Field
     private RoleEnum role;
 
-    public User(String name, String username, String password, RoleEnum role) {
+    public User(String name, String username, String email, String password, RoleEnum role) {
         this.name = name;
         this.username = username;
+        this.email = email;
         this.password = password;
         this.logged = false;
         this.role = role;
@@ -60,6 +65,10 @@ public class User {
         return role;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -78,6 +87,10 @@ public class User {
 
     public void setLogged(boolean logged) {
         this.logged = logged;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void updateUser(User user){

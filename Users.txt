@@ -1,12 +1,20 @@
 {
   "name": "Rodrigo Costa",
   "username": "rodrigocosta20",
-  "password" : "password"
+  "password" : "1234",
+"role" : "CLIENT"
 }
 
 {
   "name": "Administrator",
   "username": "admin",
-  "password" : "passwordAdmin",
+  "password" : "1234",
   "role" : "ADMIN"
+}
+
+{
+  "name": "Carolina Lopes",
+  "username": "cbvlopes",
+  "password" : "1234",
+  "role" : "CLIENT"
 }

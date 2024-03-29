@@ -31,7 +31,7 @@ public class UserController {
             Encrypt encrypt = new Encrypt();
             String encPswd = encrypt.encrypt(user.getPassword());
 
-            this.userRepository.save(new User(user.getName(), user.getUsername(), encPswd, user.getRole()));
+            this.userRepository.save(new User(user.getName(), user.getUsername(), user.getEmail(),encPswd, user.getRole()));
             return ResponseEntity.ok("User Added!");
         } catch (Exception e) {
             System.out.println("[ERROR] - " + e);
