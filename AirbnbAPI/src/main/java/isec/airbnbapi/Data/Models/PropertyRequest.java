@@ -24,7 +24,9 @@ public class PropertyRequest {
 
     private MultipartFile image;
 
-    public PropertyRequest(String name, String description, Integer nrBedrooms, Integer nrBeds, Integer nrToilets, Integer capacity, Integer pricePerNight, String location, MultipartFile image) {
+    private String adminId;
+
+    public PropertyRequest(String name, String description, Integer nrBedrooms, Integer nrBeds, Integer nrToilets, Integer capacity, Integer pricePerNight, String location, MultipartFile image, String adminId) {
         this.name = name;
         this.description = description;
         this.nrBedrooms = nrBedrooms;
@@ -34,6 +36,7 @@ public class PropertyRequest {
         this.pricePerNight = pricePerNight;
         this.location = location;
         this.image = image;
+        this.adminId = adminId;
     }
 
     public String getName() {
@@ -70,5 +73,9 @@ public class PropertyRequest {
 
     public MultipartFile getImage() {
         return image;
+    }
+
+    public String getAdminId() {
+        return adminId;
     }
 }

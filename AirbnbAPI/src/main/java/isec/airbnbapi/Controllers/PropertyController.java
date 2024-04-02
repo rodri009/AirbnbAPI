@@ -37,7 +37,8 @@ public class PropertyController {
                         property.getCapacity(),
                         property.getPricePerNight(),
                         property.getLocation(),
-                        fileContent
+                        fileContent,
+                        property.getAdminId()
                     )
             );
 

@@ -50,7 +50,11 @@ public class Property {
     @NotNull(message = "image cannot be blank")
     private byte[] image;
 
-    public Property(String name, String description, Integer nrBedrooms, Integer nrBeds, Integer nrToilets, Integer capacity, Integer pricePerNight, String location, byte[] image) {
+    @Field
+    @NotBlank(message = "adminId cannot be blank")
+    private String adminId;
+
+    public Property(String name, String description, Integer nrBedrooms, Integer nrBeds, Integer nrToilets, Integer capacity, Integer pricePerNight, String location, byte[] image, String adminId) {
         super();
         this.name = name;
         this.description = description;
@@ -61,6 +65,7 @@ public class Property {
         this.pricePerNight = pricePerNight;
         this.location = location;
         this.image = image;
+        this.adminId = adminId;
     }
 
     public String getId() {
@@ -103,6 +108,10 @@ public class Property {
         return image;
     }
 
+    public String getAdminId() {
+        return adminId;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -143,6 +152,10 @@ public class Property {
         this.image = image;
     }
 
+    public void setAdminId(String adminId) {
+        this.adminId = adminId;
+    }
+
     @Override
     public String toString() {
         return "Property{" +
@@ -167,5 +180,6 @@ public class Property {
         this.capacity = property.capacity;
         this.pricePerNight = property.pricePerNight;
         this.location = property.location;
+        this.adminId = property.adminId;
     }
 }
