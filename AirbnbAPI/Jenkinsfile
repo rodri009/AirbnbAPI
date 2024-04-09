@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Hello') {
+            steps {
+                echo 'Hello!!'
+            }
+        }
+    }
+
+    post {
+        success {
+            script {
+                def to = emailextrecipients([
+                    [$class: 'CulpritsRecipientProvider'],
+                    [$class: 'DevelopersRecipientProvider'],
+                    [$class: 'RequesterRecipientProvider']
+                ])
+                SendEmailNotification("SUCCESSFUL", to)
+            }
+        }
+        failure {
+            script {
+                def to = emailextrecipients([
+                    [$class: 'CulpritsRecipientProvider'],
+                    [$class: 'DevelopersRecipientProvider'],
+                    [$class: 'RequesterRecipientProvider']
+                ])
+                SendEmailNotification("FAILED", to)
+            }
+        }
+    }
+}
+
+def SendEmailNotification(String result, to) {
+    def subject = "${env.JOB_NAME} - Build #${env.BUILD_NUMBER} ${result}"
+    def content = '${JELLY_SCRIPT,template="html"}'
+    if(to != null && !to.isEmpty()) {
+        emailext(body: content, mimeType: 'text/html',
+                 replyTo: '$DEFAULT_REPLYTO', subject: subject,
+                 to: to, attachLog: true)
+    }
+}
