@@ -1,17 +1,5 @@
 FROM openjdk:17
-
-WORKDIR /app
-
-COPY AirbnbAPI/pom.xml .
-RUN mvn -B dependency:go-offline
-
-COPY AirbnbAPI/src ./src
-RUN mvn -B package -DskipTests
-
-ARG JAR_FILE=target/*.jar
-
-COPY ${JAR_FILE} app.jar
-
+ARG JAR_FILE=AirbnbAPI/target/*.jar
+COPY ${JAR_FILE} AirbnbAPI-0.0.1-SNAPSHOT.jar
 EXPOSE 8080
-
-CMD ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java","-jar","/AirbnbAPI-0.0.1-SNAPSHOT.jar"]
