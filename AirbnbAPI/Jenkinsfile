@@ -23,9 +23,9 @@ pipeline {
         steps {
                 script {
                         sh '''
-                        image_name="c5432/image_ba:latest"
+                        image_name="c5432/image_be:latest"
                         
-                        docker build -t $image_name -f Dockerfile .
+                        docker build -t $image_name -f AirbnbAPI/Dockerfile .
                         docker push $image_name
                         '''
                 }
