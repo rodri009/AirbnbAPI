@@ -17,19 +17,6 @@ pipeline {
                 }
                 }
         }
-        stage('Build and Publish FE') {
-            steps {
-                script {
-                        sh '''
-                        image_name="c5432/image_fe:latest"
-
-                        docker build -t $image_name -f Dockerfile .
-                        docker push $image_name
-                        '''
-                }
-            }
-        }
-
     }
 
     post {
