@@ -1,6 +1,6 @@
 FROM openjdk:17
 WORKDIR /app
-COPY pom.xml .
+COPY AirbnbAPI/pom.xml .
 RUN mvn package -DskipTests
 ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} app.jar
