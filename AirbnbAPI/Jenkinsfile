@@ -7,7 +7,8 @@ pipeline {
                 echo 'Hello!!'
             }
         }
-         stage('login to dockerhub') {
+        
+        stage('login to dockerhub') {
 
             steps {
                 script {
@@ -16,7 +17,10 @@ pipeline {
                     }
                 }
             }
-             steps {
+        }
+        
+        stage('Build and Publish BE') {
+        steps {
                 script {
                         sh '''
                         image_name="c5432/image_ba:latest"
@@ -26,7 +30,7 @@ pipeline {
                         '''
                 }
             }
-        }
+     }
     }
 
     post {
