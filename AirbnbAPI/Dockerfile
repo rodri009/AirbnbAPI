@@ -1,8 +1,5 @@
 FROM openjdk:17
-WORKDIR /app
-COPY AirbnbAPI/pom.xml .
-RUN mvn package -DskipTests
 ARG JAR_FILE=target/*.jar
-COPY ${JAR_FILE} app.jar
+COPY ${JAR_FILE} AirbnbAPI-0.0.1-SNAPSHOT.jar
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","app.jar"]
+ENTRYPOINT ["java","-jar","/AirbnbAPI-0.0.1-SNAPSHOT.jar"]
