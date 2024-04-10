@@ -1,5 +1,9 @@
 FROM openjdk:17
 
+RUN apt-get update && \
+    apt-get install -y maven && \
+    rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 COPY AirbnbAPI/pom.xml .
